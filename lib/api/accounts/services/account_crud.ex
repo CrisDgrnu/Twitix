@@ -5,10 +5,18 @@ defmodule Api.Accounts.Services.AccountCrud do
   alias Api.Accounts.Model.Account
 
   def list_accounts do
-    Repo.all(Account)
+    Account
+    |> Repo.all()
+    |> IO.inspect()
   end
 
-  def get_account!(id), do: Repo.get!(Account, id)
+  def get_account!(id), do: Account |> Repo.get!(id)
+
+  def get_account_by_email(email) do
+    Account
+    |> where(email: ^email)
+    |> Repo.one()
+  end
 
   def create_account(attrs \\ %{}) do
     %Account{}
@@ -23,10 +31,10 @@ defmodule Api.Accounts.Services.AccountCrud do
   end
 
   def delete_account(%Account{} = account) do
-    Repo.delete(account)
+    account |> Repo.delete()
   end
 
   def change_account(%Account{} = account, attrs \\ %{}) do
-    Account.changeset(account, attrs)
+    account |> Account.changeset(attrs)
   end
 end

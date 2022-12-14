@@ -8,7 +8,7 @@ defmodule Api.Users.Model.User do
     field :biography, :string
     field :full_name, :string
     field :gender, :string
-    belongs_to :account, Api.Account.Model
+    belongs_to :account, Api.Accounts.Model.Account
 
     timestamps()
   end

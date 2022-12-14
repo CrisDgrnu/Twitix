@@ -1,7 +1,7 @@
 defmodule ApiWeb.ChangesetView do
   use ApiWeb, :view
 
-  def translate_errors(changeset) do
+  defp translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
   end
 

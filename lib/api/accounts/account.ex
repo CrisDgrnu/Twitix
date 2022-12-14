@@ -7,7 +7,7 @@ defmodule Api.Accounts.Model.Account do
   schema "accounts" do
     field :email, :string
     field :hash_password, :string
-    has_one :user, Api.Users.User
+    has_one :user, Api.Users.Model.User
 
     timestamps()
   end
@@ -19,5 +19,14 @@ defmodule Api.Accounts.Model.Account do
     |> validate_required([:email, :hash_password])
     |> validate_length(:email, max: 160)
     |> unique_constraint(:email)
+    |> put_password_hash()
   end
+
+  defp put_password_hash(
+         %Ecto.Changeset{valid?: true, changes: %{hash_password: hash_password}} = changeset
+       ) do
+    change(changeset, hash_password: Bcrypt.hash_pwd_salt(hash_password))
+  end
+
+  defp put_password_hash(changeset), do: changeset
 end
