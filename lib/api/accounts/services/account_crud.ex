@@ -7,10 +7,10 @@ defmodule Api.Accounts.Services.AccountCrud do
   def list_accounts do
     Account
     |> Repo.all()
-    |> IO.inspect()
+    |> Repo.preload([:user])
   end
 
-  def get_account(id), do: Repo.get(Account, id)
+  def get_account(id), do: Repo.get(Account, id) |> Repo.preload([:user])
 
   def get_account_by_email(email) do
     Account
