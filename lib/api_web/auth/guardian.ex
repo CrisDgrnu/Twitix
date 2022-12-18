@@ -10,7 +10,7 @@ defmodule ApiWeb.Auth.Guardian do
   def subject_for_token(_, _), do: {:error, :no_id_provided}
 
   def resource_from_claims(%{"sub" => id}) do
-    case AccountCrud.get_account!(id) do
+    case AccountCrud.get_account(id) do
       nil -> {:error, :not_found}
       resource -> {:ok, resource}
     end

@@ -2,7 +2,6 @@ defmodule ApiWeb.AccountController do
   use ApiWeb, :controller
 
   alias Api.Accounts.Services.AccountCrud
-  alias Api.Accounts.Model.Account
 
   action_fallback ApiWeb.FallbackController
 
@@ -12,7 +11,7 @@ defmodule ApiWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- AccountCrud.create_account(account_params) do
+    with {:ok, account} <- AccountCrud.create_account(account_params) do
       conn
       |> put_status(:created)
       |> render("show.json", account: account)
@@ -20,23 +19,23 @@ defmodule ApiWeb.AccountController do
   end
 
   def show(conn, %{"id" => id}) do
-    account = AccountCrud.get_account!(id)
-    render(conn, "show.json", account: account)
+    case AccountCrud.get_account(id) do
+      nil -> {:error, :not_found}
+      account -> conn |> put_status(:ok) |> render("show.json", account: account)
+    end
   end
 
   def update(conn, %{"id" => id, "account" => account_params}) do
-    account = AccountCrud.get_account!(id)
-
-    with {:ok, %Account{} = account} <- AccountCrud.update_account(account, account_params) do
-      render(conn, "show.json", account: account)
+    case AccountCrud.update_account(id, account_params) do
+      {:ok, updated_account} -> render(conn, "show.json", account: updated_account)
+      {:error, code} -> {:error, code}
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    account = AccountCrud.get_account!(id)
-
-    with {:ok, %Account{}} <- AccountCrud.delete_account(account) do
-      send_resp(conn, :no_content, "")
+    case AccountCrud.delete_account(id) do
+      {:ok, _} -> send_resp(conn, :no_content, "")
+      {:error, code} -> {:error, code}
     end
   end
 end

@@ -5,6 +5,10 @@ defmodule ApiWeb.ErrorView do
     %{errors: %{detail: "Malformed Body", code: 400}}
   end
 
+  def render("404.json", _assigns) do
+    %{errors: %{detail: "Element not found", code: 404}}
+  end
+
   def render("500.json", _assigns) do
     %{errors: %{detail: "Internal Server Error", code: 500}}
   end

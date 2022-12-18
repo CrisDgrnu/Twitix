@@ -10,7 +10,7 @@ defmodule Api.Accounts.Services.AccountCrud do
     |> IO.inspect()
   end
 
-  def get_account!(id), do: Account |> Repo.get!(id)
+  def get_account(id), do: Repo.get(Account, id)
 
   def get_account_by_email(email) do
     Account
@@ -24,14 +24,18 @@ defmodule Api.Accounts.Services.AccountCrud do
     |> Repo.insert()
   end
 
-  def update_account(%Account{} = account, attrs) do
-    account
-    |> Account.changeset(attrs)
-    |> Repo.update()
+  def update_account(id, attrs) do
+    case get_account(id) do
+      nil -> {:error, :not_found}
+      account -> account |> Account.changeset(attrs) |> Repo.update()
+    end
   end
 
-  def delete_account(%Account{} = account) do
-    account |> Repo.delete()
+  def delete_account(id) do
+    case get_account(id) do
+      nil -> {:error, :not_found}
+      account -> account |> Repo.delete()
+    end
   end
 
   def change_account(%Account{} = account, attrs \\ %{}) do
