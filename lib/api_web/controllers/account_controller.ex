@@ -1,6 +1,5 @@
 defmodule ApiWeb.AccountController do
   use ApiWeb, :controller
-
   alias Api.Accounts.Services.AccountCrud
 
   action_fallback ApiWeb.FallbackController

@@ -12,6 +12,6 @@ defmodule Api.Repo.Migrations.CreateUsers do
       timestamps()
     end
 
-    create index(:users, [:account_id, :full_name])
+    create unique_index(:users, [:account_id])
   end
 end

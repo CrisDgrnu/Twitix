@@ -18,5 +18,7 @@ defmodule Api.Users.Model.User do
     user
     |> cast(attrs, [:account_id, :full_name, :gender, :biography])
     |> validate_required([:account_id])
+    |> unique_constraint(:account_id)
+    |> assoc_constraint(:account)
   end
 end

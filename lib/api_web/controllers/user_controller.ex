@@ -1,8 +1,6 @@
 defmodule ApiWeb.UserController do
   use ApiWeb, :controller
-
   alias Api.Users.Services.UserCrud
-  alias Api.Users.Model.User
 
   action_fallback ApiWeb.FallbackController
 
@@ -11,27 +9,32 @@ defmodule ApiWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
-  def create(conn, %{"user" => user_params, "accountId" => account_id}) do
+  def create(conn, %{"user" => user_params}) do
+    with {:ok, user} <- UserCrud.create_user(user_params) do
+      conn
+      |> put_status(:created)
+      |> render("show.json", user: user)
+    end
   end
 
   def show(conn, %{"id" => id}) do
-    user = UserCrud.get_user!(id)
-    render(conn, "show.json", user: user)
+    case UserCrud.get_user(id) do
+      nil -> {:error, :not_found}
+      user -> conn |> put_status(:ok) |> render("show.json", user: user)
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = UserCrud.get_user!(id)
-
-    with {:ok, %User{} = user} <- UserCrud.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
+    case UserCrud.update_user(id, user_params) do
+      {:ok, updated_user} -> render(conn, "show.json", user: updated_user)
+      {:error, code} -> {:error, code}
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    user = UserCrud.get_user!(id)
-
-    with {:ok, %User{}} <- UserCrud.delete_user(user) do
-      send_resp(conn, :no_content, "")
+    case UserCrud.delete_user(id) do
+      {:ok, _} -> send_resp(conn, :no_content, "")
+      {:error, code} -> {:error, code}
     end
   end
 end
