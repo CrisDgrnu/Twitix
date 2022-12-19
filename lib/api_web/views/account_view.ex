@@ -14,8 +14,7 @@ defmodule ApiWeb.AccountView do
   def render("account.json", %{account: account}) do
     %{
       id: account.id,
-      email: account.email,
-      user: render_one(account.user, UserView, "user.json")
+      email: account.email
     }
   end
 end

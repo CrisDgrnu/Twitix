@@ -8,7 +8,7 @@ defmodule Api.Users.Services.UserCrud do
     Repo.all(User)
   end
 
-  def get_user(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   def create_user(attrs \\ %{}) do
     %User{}

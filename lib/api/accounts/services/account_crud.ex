@@ -5,12 +5,10 @@ defmodule Api.Accounts.Services.AccountCrud do
   alias Api.Accounts.Model.Account
 
   def list_accounts do
-    Account
-    |> Repo.all()
-    |> Repo.preload([:user])
+    Repo.all(Account)
   end
 
-  def get_account(id), do: Repo.get(Account, id) |> Repo.preload([:user])
+  def get_account(id), do: Repo.get(Account, id)
 
   def get_account_by_email(email) do
     Account
@@ -34,11 +32,11 @@ defmodule Api.Accounts.Services.AccountCrud do
   def delete_account(id) do
     case get_account(id) do
       nil -> {:error, :not_found}
-      account -> account |> Repo.delete()
+      account -> Repo.delete(account)
     end
   end
 
   def change_account(%Account{} = account, attrs \\ %{}) do
-    account |> Account.changeset(attrs)
+    Account.changeset(account, attrs)
   end
 end

@@ -5,9 +5,9 @@ defmodule Api.Accounts.Model.Account do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "accounts" do
-    field :email, :string
-    field :hash_password, :string
-    has_one :user, Api.Users.Model.User
+    field(:email, :string)
+    field(:hash_password, :string)
+    has_one(:user, Api.Users.Model.User)
 
     timestamps()
   end

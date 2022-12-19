@@ -5,10 +5,11 @@ defmodule Api.Users.Model.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
-    field :biography, :string
-    field :full_name, :string
-    field :gender, :string
-    belongs_to :account, Api.Accounts.Model.Account
+    field(:biography, :string)
+    field(:full_name, :string)
+    field(:gender, Ecto.Enum, values: [:male, :female])
+    has_many(:posts, Api.Posts.Model.Post)
+    belongs_to(:account, Api.Accounts.Model.Account)
 
     timestamps()
   end
