@@ -1,21 +1,15 @@
 defmodule Api.UsersFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `Api.Users` context.
-  """
+  alias Api.Users.Services.UserCrud
 
-  @doc """
-  Generate a user.
-  """
-  def user_fixture(attrs \\ %{}) do
+  def create_test_user(attrs \\ %{}) do
     {:ok, user} =
       attrs
       |> Enum.into(%{
         biography: "some biography",
         full_name: "some full_name",
-        gender: "some gender"
+        gender: :male
       })
-      |> Api.Users.create_user()
+      |> UserCrud.create_user()
 
     user
   end

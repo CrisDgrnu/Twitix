@@ -1,21 +1,21 @@
 defmodule ApiWeb.UserControllerTest do
   use ApiWeb.ConnCase
-
   import Api.UsersFixtures
-
-  alias Api.Users.User
+  alias Api.Users.Model.User
 
   @create_attrs %{
     biography: "some biography",
     full_name: "some full_name",
-    gender: "some gender"
+    gender: :male
   }
+
   @update_attrs %{
     biography: "some updated biography",
     full_name: "some updated full_name",
-    gender: "some updated gender"
+    gender: :female
   }
-  @invalid_attrs %{biography: nil, full_name: nil, gender: nil}
+
+  @invalid_attrs %{biography: nil, full_name: nil, gender: "invalid gender"}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -35,12 +35,14 @@ defmodule ApiWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert %{
-               "id" => ^id,
-               "biography" => "some biography",
-               "full_name" => "some full_name",
-               "gender" => "some gender"
-             } = json_response(conn, 200)["data"]
+      expected_response_body = %{
+        "id" => id,
+        "biography" => "some biography",
+        "full_name" => "some full_name",
+        "gender" => "male"
+      }
+
+      assert expected_response_body == json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -58,12 +60,14 @@ defmodule ApiWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert %{
-               "id" => ^id,
-               "biography" => "some updated biography",
-               "full_name" => "some updated full_name",
-               "gender" => "some updated gender"
-             } = json_response(conn, 200)["data"]
+      expected_response_body = %{
+        "id" => id,
+        "biography" => "some updated biography",
+        "full_name" => "some updated full_name",
+        "gender" => "female"
+      }
+
+      assert expected_response_body = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
@@ -79,14 +83,13 @@ defmodule ApiWeb.UserControllerTest do
       conn = delete(conn, Routes.user_path(conn, :delete, user))
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.user_path(conn, :show, user))
-      end
+      conn = get(conn, Routes.user_path(conn, :show, user))
+      assert response(conn, 404)
     end
   end
 
   defp create_user(_) do
-    user = user_fixture()
+    user = create_test_user()
     %{user: user}
   end
 end

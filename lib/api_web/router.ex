@@ -11,8 +11,8 @@ defmodule ApiWeb.Router do
   scope "/api", ApiWeb do
     pipe_through(:api)
 
-    resources("/accounts", AccountController, only: [:index, :show, :create, :update, :delete])
-    resources("/users", UserController, only: [:index, :show, :create, :update, :delete])
-    resources("/posts", PostController, only: [:index, :show, :create, :update, :delete])
+    resources("/users", UserController, only: [:index, :show, :create, :update, :delete]) do
+      resources("/posts", PostController, only: [:index, :show, :create, :update, :delete])
+    end
   end
 end

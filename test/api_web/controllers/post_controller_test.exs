@@ -1,88 +1,88 @@
-defmodule ApiWeb.PostControllerTest do
-  use ApiWeb.ConnCase
+# defmodule ApiWeb.PostControllerTest do
+#   use ApiWeb.ConnCase
 
-  import Api.PostosFixtures
+#   import Api.PostosFixtures
 
-  alias Api.Postos.Post
+#   alias Api.Postos.Post
 
-  @create_attrs %{
-    likes: 42,
-    text: "some text"
-  }
-  @update_attrs %{
-    likes: 43,
-    text: "some updated text"
-  }
-  @invalid_attrs %{likes: nil, text: nil}
+#   @create_attrs %{
+#     likes: 42,
+#     text: "some text"
+#   }
+#   @update_attrs %{
+#     likes: 43,
+#     text: "some updated text"
+#   }
+#   @invalid_attrs %{likes: nil, text: nil}
 
-  setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
-  end
+#   setup %{conn: conn} do
+#     {:ok, conn: put_req_header(conn, "accept", "application/json")}
+#   end
 
-  describe "index" do
-    test "lists all posts", %{conn: conn} do
-      conn = get(conn, Routes.post_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
-    end
-  end
+#   describe "index" do
+#     test "lists all posts", %{conn: conn} do
+#       conn = get(conn, Routes.post_path(conn, :index))
+#       assert json_response(conn, 200)["data"] == []
+#     end
+#   end
 
-  describe "create post" do
-    test "renders post when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+#   describe "create post" do
+#     test "renders post when data is valid", %{conn: conn} do
+#       conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
+#       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, Routes.post_path(conn, :show, id))
+#       conn = get(conn, Routes.post_path(conn, :show, id))
 
-      assert %{
-               "id" => ^id,
-               "likes" => 42,
-               "text" => "some text"
-             } = json_response(conn, 200)["data"]
-    end
+#       assert %{
+#                "id" => ^id,
+#                "likes" => 42,
+#                "text" => "some text"
+#              } = json_response(conn, 200)["data"]
+#     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.post_path(conn, :create), post: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
+#     test "renders errors when data is invalid", %{conn: conn} do
+#       conn = post(conn, Routes.post_path(conn, :create), post: @invalid_attrs)
+#       assert json_response(conn, 422)["errors"] != %{}
+#     end
+#   end
 
-  describe "update post" do
-    setup [:create_post]
+#   describe "update post" do
+#     setup [:create_post]
 
-    test "renders post when data is valid", %{conn: conn, post: %Post{id: id} = post} do
-      conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+#     test "renders post when data is valid", %{conn: conn, post: %Post{id: id} = post} do
+#       conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
+#       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get(conn, Routes.post_path(conn, :show, id))
+#       conn = get(conn, Routes.post_path(conn, :show, id))
 
-      assert %{
-               "id" => ^id,
-               "likes" => 43,
-               "text" => "some updated text"
-             } = json_response(conn, 200)["data"]
-    end
+#       assert %{
+#                "id" => ^id,
+#                "likes" => 43,
+#                "text" => "some updated text"
+#              } = json_response(conn, 200)["data"]
+#     end
 
-    test "renders errors when data is invalid", %{conn: conn, post: post} do
-      conn = put(conn, Routes.post_path(conn, :update, post), post: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
+#     test "renders errors when data is invalid", %{conn: conn, post: post} do
+#       conn = put(conn, Routes.post_path(conn, :update, post), post: @invalid_attrs)
+#       assert json_response(conn, 422)["errors"] != %{}
+#     end
+#   end
 
-  describe "delete post" do
-    setup [:create_post]
+#   describe "delete post" do
+#     setup [:create_post]
 
-    test "deletes chosen post", %{conn: conn, post: post} do
-      conn = delete(conn, Routes.post_path(conn, :delete, post))
-      assert response(conn, 204)
+#     test "deletes chosen post", %{conn: conn, post: post} do
+#       conn = delete(conn, Routes.post_path(conn, :delete, post))
+#       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.post_path(conn, :show, post))
-      end
-    end
-  end
+#       assert_error_sent 404, fn ->
+#         get(conn, Routes.post_path(conn, :show, post))
+#       end
+#     end
+#   end
 
-  defp create_post(_) do
-    post = post_fixture()
-    %{post: post}
-  end
-end
+#   defp create_post(_) do
+#     post = post_fixture()
+#     %{post: post}
+#   end
+# end

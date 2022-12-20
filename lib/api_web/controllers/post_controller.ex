@@ -1,8 +1,7 @@
 defmodule ApiWeb.PostController do
   use ApiWeb, :controller
 
-  alias Api.Posts.Services.PostCrud
-  alias Api.Posts.Model.Post
+  alias Api.Posts.{Services.PostCrud, Model.Post}
 
   action_fallback(ApiWeb.FallbackController)
 
