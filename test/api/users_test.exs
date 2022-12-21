@@ -20,6 +20,11 @@ defmodule Api.UsersTest do
       assert UserCrud.get_user(user.id) == user
     end
 
+    test "get_user_by_email/1 returns the user with given email" do
+      user = create_test_user()
+      assert UserCrud.get_user_by_email(user.email) == user
+    end
+
     test "create_user/1 with valid data creates a user" do
       valid_attrs = %{
         biography: "some biography",

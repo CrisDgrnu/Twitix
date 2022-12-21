@@ -18,6 +18,6 @@ defmodule Api.Users.Model.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:full_name, :gender, :biography])
+    |> cast(attrs, [:email, :hash_password, :full_name, :gender, :biography])
   end
 end

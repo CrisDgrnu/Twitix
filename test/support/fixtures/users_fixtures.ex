@@ -5,6 +5,7 @@ defmodule Api.UsersFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
+        email: "cris@dev.com",
         biography: "some biography",
         full_name: "some full_name",
         gender: :male

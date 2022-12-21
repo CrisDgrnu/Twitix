@@ -67,7 +67,7 @@ defmodule ApiWeb.UserControllerTest do
         "gender" => "female"
       }
 
-      assert expected_response_body = json_response(conn, 200)["data"]
+      assert expected_response_body == json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do

@@ -10,6 +10,8 @@ defmodule Api.Users.Services.UserCrud do
 
   def get_user(id), do: Repo.get(User, id)
 
+  def get_user_by_email(email), do: Repo.get_by(User, email: email)
+
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)

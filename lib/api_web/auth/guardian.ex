@@ -1,6 +1,6 @@
 defmodule ApiWeb.Auth.Guardian do
   use Guardian, otp_app: :api
-  alias Api.Accounts.Services.AccountCrud
+  alias Api.Users.Services.UserCrud
 
   def subject_for_token(%{id: id}, _claims) do
     sub = to_string(id)
@@ -10,7 +10,7 @@ defmodule ApiWeb.Auth.Guardian do
   def subject_for_token(_, _), do: {:error, :no_id_provided}
 
   def resource_from_claims(%{"sub" => id}) do
-    case AccountCrud.get_account(id) do
+    case UserCrud.get_user(id) do
       nil -> {:error, :not_found}
       resource -> {:ok, resource}
     end
@@ -19,7 +19,7 @@ defmodule ApiWeb.Auth.Guardian do
   def resource_from_claims(_), do: {:error, :no_id_provided}
 
   def authenticate(email, password) do
-    case AccountCrud.get_account_by_email(email) do
+    case UserCrud.get_user_by_email(email) do
       nil ->
         {:error, :unauthorized}
 
