@@ -18,25 +18,25 @@ defmodule ApiWeb.Auth.Guardian do
 
   def resource_from_claims(_), do: {:error, :no_id_provided}
 
-  def authenticate(email, password) do
+  def authenticate(email, raw_password) do
     case UserCrud.get_user_by_email(email) do
       nil ->
         {:error, :unauthorized}
 
-      account ->
-        case(validate_password(password, account.hash_password)) do
-          true -> create_token(account)
+      user ->
+        case validate_password(raw_password, user.password) do
+          true -> create_token(user)
           false -> {:error, :unauthorized}
         end
     end
   end
 
-  defp validate_password(password, hash_password) do
-    Bcrypt.verify_pass(password, hash_password)
+  defp validate_password(raw_password, password) do
+    Bcrypt.verify_pass(raw_password, password)
   end
 
   defp create_token(account) do
     {:ok, token, _claims} = encode_and_sign(account)
-    {:ok, account, token}
+    {:ok, token}
   end
 end

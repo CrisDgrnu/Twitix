@@ -1,9 +1,10 @@
 defmodule ApiWeb.PostControllerTest do
   use ApiWeb.ConnCase
 
-  import Api.{PostsFixtures, UsersFixtures}
+  import Test.{PostsFixtures, UsersFixtures, AuthFixtures}
 
   alias Api.Posts.Model.Post
+  alias ApiWeb.Auth.Guardian
 
   @create_attrs %{
     likes: 42,
@@ -16,20 +17,21 @@ defmodule ApiWeb.PostControllerTest do
   @invalid_attrs %{likes: nil, text: nil}
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    %{id: user_id} = create_test_user()
+    {:ok, conn: setup_auth_connection(conn), user_id: user_id}
   end
 
   describe "index" do
-    test "lists all posts", %{conn: conn} do
-      user = create_test_user()
-      conn = get(conn, Routes.user_post_path(conn, :index, user.id))
-      assert json_response(conn, 200)["data"] == []
+    test "lists all posts", %{conn: conn, user_id: user_id} do
+      conn = get(conn, Routes.user_post_path(conn, :index, user_id))
+      data = json_response(conn, 200)["data"]
+      assert is_list(data)
+      assert data == []
     end
   end
 
   describe "create post" do
-    test "renders post when data is valid", %{conn: conn} do
-      %{id: user_id} = create_test_user()
+    test "renders post when data is valid", %{conn: conn, user_id: user_id} do
       post = Map.put(@create_attrs, :user_id, user_id)
       conn = post(conn, Routes.user_post_path(conn, :create, user_id), post: post)
 
@@ -46,18 +48,17 @@ defmodule ApiWeb.PostControllerTest do
       assert expected_response_body == json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      %{id: user_id} = create_test_user()
+    test "renders errors when data is invalid", %{conn: conn, user_id: user_id} do
       conn = post(conn, Routes.user_post_path(conn, :create, user_id), post: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "update post" do
-    setup [:create_post]
+    test "renders post when data is valid", %{conn: conn, user_id: user_id} do
+      post = create_test_post(%{user_id: user_id})
+      %Post{id: id} = post
 
-    test "renders post when data is valid", %{conn: conn, post: %Post{id: id} = post} do
-      %{user_id: user_id} = post
       update_post = Map.put(@update_attrs, :user_id, user_id)
       conn = put(conn, Routes.user_post_path(conn, :update, user_id, post), post: update_post)
 
@@ -74,28 +75,23 @@ defmodule ApiWeb.PostControllerTest do
       assert expected_response_body == json_response(conn, 200)["data"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, post: post} do
-      %{user_id: user_id} = post
+    test "renders errors when data is invalid", %{conn: conn, user_id: user_id} do
+      post = create_test_post(%{user_id: user_id})
+
       conn = put(conn, Routes.user_post_path(conn, :update, user_id, post), post: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
   describe "delete post" do
-    setup [:create_post]
+    test "deletes chosen post", %{conn: conn, user_id: user_id} do
+      post = create_test_post(%{user_id: user_id})
 
-    test "deletes chosen post", %{conn: conn, post: %Post{id: post_id} = post} do
-      %{user_id: user_id} = post
       conn = delete(conn, Routes.user_post_path(conn, :delete, user_id, post))
       assert response(conn, 204)
 
-      conn = get(conn, Routes.user_post_path(conn, :show, user_id, post_id))
+      conn = get(conn, Routes.user_post_path(conn, :show, user_id, post.id))
       assert response(conn, 404)
     end
-  end
-
-  defp create_post(_) do
-    post = create_test_post()
-    %{post: post}
   end
 end

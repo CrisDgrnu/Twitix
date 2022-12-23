@@ -6,7 +6,7 @@ defmodule Api.UsersTest do
   describe "users" do
     alias Api.Users.Model.User
 
-    import Api.UsersFixtures
+    import Test.UsersFixtures
 
     @invalid_attrs %{biography: nil, full_name: nil, gender: "invalid gender"}
 

@@ -3,7 +3,7 @@ defmodule ApiWeb.PostController do
 
   alias Api.Posts.{Services.PostCrud, Model.Post}
 
-  action_fallback(ApiWeb.FallbackController)
+  action_fallback ApiWeb.FallbackController
 
   def index(conn, _params) do
     posts = PostCrud.list_posts()
